@@ -31,6 +31,8 @@ void applyGaussianBlur() override;
 int width() const override;
 int height() const override;
 
+const std::vector<uint8_t>& getData() const { return data; }
+
 private:
 BMPHeader header;
 

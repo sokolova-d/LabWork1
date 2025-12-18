@@ -86,7 +86,7 @@ void BMPImage::rotate90CCW() {
 	for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             for (int c = 0; c < 3; ++c) {
-                result[((w - x - 1) * h + x) * 3 + c] =
+                result[((w - x - 1) * h + y) * 3 + c] =
                     data[(y * w + x) * 3 + c];
             }
         }
@@ -97,7 +97,7 @@ void BMPImage::rotate90CCW() {
 }
 
 void BMPImage::applyGaussianBlur() {
-	static const kernel[3][3] = {
+	static const int kernel[3][3] = {
 		{1, 2, 1},
 		{2, 4, 2},
 		{1, 2, 1}

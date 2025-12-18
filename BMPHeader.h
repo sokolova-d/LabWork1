@@ -29,7 +29,6 @@ struct BMPInfoHeader {
     uint32_t biCompression;
     uint32_t biSizeImage;
     int32_t  biXPelsPerMeter;
-    int32_t  biYPelsPerMeter
     uint32_t biClrUsed;
     uint32_t biClrImportant;
 };
@@ -41,6 +40,19 @@ public:
 //constuctor
 BMPHeader();
 BMPHeader(int width, int height);
+
+void setWidth(int w) { info.biWidth = w; updateSizes(); }
+void setHeight(int h) { info.biHeight = h; updateSizes(); }
+int getWidth() const { return info.biWidth; }
+int getHeight() const { return info.biHeight; }
+int getBitsPerPixel() const { return info.biBitCount; }
+int getCompression() const { return info.biCompression; }
+
+void updateSizes() {
+    int padding = rowPadding();
+    info.biSizeImage = (info.biWidth * 3 + padding) * info.biHeight;
+    file.bfSize = file.bfOffBits + info.biSizeImage;
+}
 
 void read(std::ifstream& in);
 void write(std::ofstream& out) const;
