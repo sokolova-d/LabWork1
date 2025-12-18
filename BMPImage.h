@@ -28,8 +28,8 @@ void rotate90CCW() override;
 
 void applyGaussianBlur() override;
 
-int width() const override;
-int height() const override;
+int width() const override { return header.info.biWidth; }
+int height() const override { return header.info.biHeight; }
 
 const std::vector<uint8_t>& getData() const { return data; }
 
