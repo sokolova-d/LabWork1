@@ -10,12 +10,14 @@
 #include <exception>
 #include <string>
 
-int main() {
+int main()
+{
     std::string filename;
     std::cout << "Enter BMP filename: ";
     std::getline(std::cin, filename);
 
-    try {
+    try
+    {
         BMPImage image;
         image.load(filename);
 
@@ -33,7 +35,8 @@ int main() {
 
         std::cout << "Processing completed successfully.\n";
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         std::cerr << "Error: " << e.what() << '\n';
         return 1;
     }

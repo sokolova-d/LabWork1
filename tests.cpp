@@ -13,14 +13,16 @@
 #include <vector>
 #include <cstdint>
 
-static void createTestBMP(const std::string& filename) {
+static void createTestBMP(const std::string& filename)
+{
     BMPHeader header;
     header.setWidth(2);
     header.setHeight(2);
     header.setBitsPerPixel(24);
     header.updateSizes();
 
-    std::vector<uint8_t> pixels = {
+    std::vector<uint8_t> pixels =
+    {
         0,   0, 255,   // red
         0, 255,   0,   // green
         255, 0,   0,   // blue
@@ -39,14 +41,16 @@ static void createTestBMP(const std::string& filename) {
 }
 
 //testing constructor
-TEST(BMPHeaderTest, DefaultConstructor) {
+TEST(BMPHeaderTest, DefaultConstructor)
+{
     BMPHeader header;
 
     EXPECT_EQ(header.getBitsPerPixel(), 24);
     EXPECT_EQ(header.getCompression(), 0);
 }
 //testing setting dimensions
-TEST(BMPHeaderTest, SetDimensions) {
+TEST(BMPHeaderTest, SetDimensions)
+{
     BMPHeader header;
     header.setWidth(100);
     header.setHeight(50);
@@ -57,7 +61,8 @@ TEST(BMPHeaderTest, SetDimensions) {
 }
 
 //test loading files
-TEST(BMPImageTest, LoadImage) {
+TEST(BMPImageTest, LoadImage)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -65,13 +70,15 @@ TEST(BMPImageTest, LoadImage) {
     EXPECT_EQ(img.width(), 2);
     EXPECT_EQ(img.height(), 2);
 }
-TEST(BMPImageTest, LoadInvalidFile) {
+TEST(BMPImageTest, LoadInvalidFile)
+{
     BMPImage img;
     EXPECT_THROW(img.load("no_file.bmp"), std::runtime_error);
 }
 
 //rotation tests
-TEST(BMPImageTest, RotateCWSize) {
+TEST(BMPImageTest, RotateCWSize)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -81,7 +88,8 @@ TEST(BMPImageTest, RotateCWSize) {
     EXPECT_EQ(img.width(), 2);
     EXPECT_EQ(img.height(), 2);
 }
-TEST(BMPImageTest, RotateCWChangesPixels) {
+TEST(BMPImageTest, RotateCWChangesPixels)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -94,7 +102,8 @@ TEST(BMPImageTest, RotateCWChangesPixels) {
     EXPECT_NE(before, after);
 }
 
-TEST(BMPImageTest, RotateCCWSize) {
+TEST(BMPImageTest, RotateCCWSize)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -104,7 +113,8 @@ TEST(BMPImageTest, RotateCCWSize) {
     EXPECT_EQ(img.width(), 2);
     EXPECT_EQ(img.height(), 2);
 }
-TEST(BMPImageTest, RotateCWAndCCWRestore) {
+TEST(BMPImageTest, RotateCWAndCCWRestore)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -119,7 +129,8 @@ TEST(BMPImageTest, RotateCWAndCCWRestore) {
 }
 
 //testing gauss filter
-TEST(BMPImageTest, GaussianBlurDoesNotCrash) {
+TEST(BMPImageTest, GaussianBlurDoesNotCrash)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -127,7 +138,8 @@ TEST(BMPImageTest, GaussianBlurDoesNotCrash) {
 
     EXPECT_NO_THROW(img.applyGaussianBlur());
 }
-TEST(BMPImageTest, GaussianBlurChangesPixels) {
+TEST(BMPImageTest, GaussianBlurChangesPixels)
+{
     createTestBMP("test.bmp");
     BMPImage img;
     img.load("test.bmp");
@@ -140,14 +152,16 @@ TEST(BMPImageTest, GaussianBlurChangesPixels) {
 }
 
 //saving tests
-TEST(BMPImageTest, SaveImageDoesNotThrow) {
+TEST(BMPImageTest, SaveImageDoesNotThrow)
+{
     createTestBMP("test.bmp");
     BMPImage img;
     img.load("test.bmp");
 
     EXPECT_NO_THROW(img.save("out.bmp"));
 }
-TEST(BMPImageTest, SavedFileExists) {
+TEST(BMPImageTest, SavedFileExists)
+{
     createTestBMP("test.bmp");
 
     BMPImage img;
@@ -158,7 +172,8 @@ TEST(BMPImageTest, SavedFileExists) {
     EXPECT_TRUE(f.good());
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

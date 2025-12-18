@@ -14,31 +14,41 @@
 #include <string>
 #include <vector>
 
-class BMPImage : public Image {
+class BMPImage : public Image
+{
 public:
 //constructor and destructor
-BMPImage() = default;
-~BMPImage() override = default;
+    BMPImage() = default;
+    ~BMPImage() override = default;
 
-void load(const std::string& filename) override;
-void save(const std::string& filename) const override;
+    void load(const std::string& filename) override;
+    void save(const std::string& filename) const override;
 
-void rotate90CW() override;
-void rotate90CCW() override;
+    void rotate90CW() override;
+    void rotate90CCW() override;
 
-void applyGaussianBlur() override;
+    void applyGaussianBlur() override;
 
-int width() const override { return header.info.biWidth; }
-int height() const override { return header.info.biHeight; }
+    int width() const override
+    {
+        return header.info.biWidth;
+    }
+    int height() const override
+    {
+        return header.info.biHeight;
+    }
 
-const std::vector<uint8_t>& getData() const { return data; }
+    const std::vector<uint8_t>& getData() const
+    {
+        return data;
+    }
 
 private:
-BMPHeader header;
+    BMPHeader header;
 
-std::vector<uint8_t> data;
+    std::vector<uint8_t> data;
 
-int index(int x, int y) const;
+    int index(int x, int y) const;
 };
 
 #endif
