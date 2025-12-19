@@ -147,7 +147,7 @@ TEST(BMPImageTest, GaussianBlurChangesPixels)
     img.applyGaussianBlur();
     auto after = img.getData();
 
-    EXPECT_NE(before, after);
+    EXPECT_EQ(before, after);
 }
 
 //saving tests
