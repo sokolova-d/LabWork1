@@ -18,7 +18,6 @@ static void createTestBMP(const std::string& filename)
     BMPHeader header;
     header.setWidth(2);
     header.setHeight(2);
-    header.setBitsPerPixel(24);
     header.updateSizes();
 
     std::vector<uint8_t> pixels =
