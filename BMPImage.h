@@ -17,7 +17,6 @@
 class BMPImage : public Image
 {
 public:
-//constructor and destructor
     BMPImage() = default;
     ~BMPImage() override = default;
 

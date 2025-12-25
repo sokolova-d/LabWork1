@@ -10,9 +10,13 @@
 #include <stdexcept>
 #include <algorithm>
 
+static constexpr int BMP_GAUSSIAN_DIVISOR = 16;
+static constexpr int BMP_ROTATION_OFFSET = 1;
+static constexpr int BMP_GAUSSIAN_KERNEL_SIZE = 3;
+
 int BMPImage::index(int x, int y) const
 {
-    return (y * width() + x) * 3;
+    return (y * width() + x) * BMP_CHANNELS;
 }
 
 void BMPImage::load(const std::string& filename)
@@ -23,12 +27,12 @@ void BMPImage::load(const std::string& filename)
         throw std::runtime_error("Cannot open BMP file");
     }
     header.read(in);
-    if (header.file.bfType != 0x4D42)
+    if (header.file.bfType != BMP_TYPE_VALUE)
     {
         throw std::runtime_error("Not a BMP file");
     }
 
-    if (header.info.biBitCount != 24 || header.info.biCompression != 0)
+    if (header.info.biBitCount != BMP_BITCOUNT_DEFAULT || header.info.biCompression != BMP_COMPRESSION_NONE)
     {
         throw std::runtime_error("Only uncompressed 24-bit BMP is supported");
     }
@@ -37,13 +41,13 @@ void BMPImage::load(const std::string& filename)
     int h = header.info.biHeight;
     int padding = header.rowPadding();
 
-    data.resize(w * h * 3);
+    data.resize(w * h * BMP_CHANNELS);
 
     in.seekg(header.file.bfOffBits, std::ios::beg);
 
     for (int y = 0; y < h; ++y)
     {
-        in.read(reinterpret_cast<char*>(&data[y * w * 3]), w * 3);
+        in.read(reinterpret_cast<char*>(&data[y * w * BMP_CHANNELS]), w * BMP_CHANNELS);
         in.ignore(padding);
     }
 }
@@ -63,8 +67,8 @@ void BMPImage::save(const std::string& filename) const
 
     for (int y = 0; y < height(); ++y)
     {
-        out.write(reinterpret_cast<const char*>(&data[y * width() * 3]),
-                  width() * 3);
+        out.write(reinterpret_cast<const char*>(&data[y * width() * BMP_CHANNELS]),
+                  width() * BMP_CHANNELS);
         out.write(reinterpret_cast<const char*>(pad.data()), padding);
     }
 }
@@ -73,16 +77,16 @@ void BMPImage::rotate90CW()
 {
     int w = width();
     int h = height();
-    std::vector<uint8_t> result(w * h * 3);
+    std::vector<uint8_t> result(w * h * BMP_CHANNELS);
 
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
         {
-            for (int c = 0; c < 3; ++c)
+            for (int c = 0; c < BMP_CHANNELS; ++c)
             {
-                result[(x * h + (h - y - 1)) * 3 + c] =
-                    data[(y * w + x) * 3 + c];
+                result[(x * h + (h - y - BMP_ROTATION_OFFSET)) * BMP_CHANNELS + c] =
+                    data[(y * w + x) * BMP_CHANNELS + c];
             }
         }
     }
@@ -95,16 +99,16 @@ void BMPImage::rotate90CCW()
 {
     int w = width();
     int h = height();
-    std::vector<uint8_t> result(w * h * 3);
+    std::vector<uint8_t> result(w * h * BMP_CHANNELS);
 
     for (int y = 0; y < h; ++y)
     {
         for (int x = 0; x < w; ++x)
         {
-            for (int c = 0; c < 3; ++c)
+            for (int c = 0; c < BMP_CHANNELS; ++c)
             {
-                result[((w - x - 1) * h + y) * 3 + c] =
-                    data[(y * w + x) * 3 + c];
+                result[((w - x - BMP_ROTATION_OFFSET) * h + y) * BMP_CHANNELS + c] =
+                    data[(y * w + x) * BMP_CHANNELS + c];
             }
         }
     }
@@ -115,12 +119,13 @@ void BMPImage::rotate90CCW()
 
 void BMPImage::applyGaussianBlur()
 {
-    static const int kernel[3][3] =
+    static const int kernel[BMP_GAUSSIAN_KERNEL_SIZE][BMP_GAUSSIAN_KERNEL_SIZE] =
     {
         {1, 2, 1},
         {2, 4, 2},
         {1, 2, 1}
     };
+
     int w = width();
     int h = height();
     std::vector<uint8_t> result = data;
@@ -129,7 +134,7 @@ void BMPImage::applyGaussianBlur()
     {
         for (int x = 1; x < w - 1; ++x)
         {
-            for (int c = 0; c < 3; ++c)
+            for (int c = 0; c < BMP_CHANNELS; ++c)
             {
                 int sum = 0;
                 for (int ky = -1; ky <= 1; ++ky)
@@ -140,10 +145,9 @@ void BMPImage::applyGaussianBlur()
                                data[index(x + kx, y + ky) + c];
                     }
                 }
-                result[index(x, y) + c] = static_cast<uint8_t>(sum / 16);
+                result[index(x, y) + c] = static_cast<uint8_t>(sum / BMP_GAUSSIAN_DIVISOR);
             }
         }
     }
     data.swap(result);
 }
-

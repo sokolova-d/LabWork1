@@ -5,7 +5,7 @@ SRC = main.cpp BMPHeader.cpp BMPImage.cpp
 OBJ = $(SRC:.cpp=.o)
 TARGET = Images
 
-TEST_SRC = tests.cpp BMPHeader.cpp BMPImage.cpp
+TEST_SRC = test.cpp BMPHeader.cpp BMPImage.cpp
 TEST_BIN = test_app
 
 all: $(TARGET)
@@ -27,3 +27,4 @@ clean:
 	rm -f $(OBJ) $(TARGET) $(TEST_BIN)
 
 .PHONY: all run clean test
+

@@ -3,13 +3,12 @@
 * st141899@student.spbu.ru
 * My project number five.
 */
-
 #include "BMPHeader.h"
 
 BMPHeader::BMPHeader()
 {
-    file.bfType = 0x4D42;
-    info.biSize = 40;
+    file.bfType = BMP_TYPE_VALUE;
+    info.biSize = BMP_INFO_HEADER_SIZE;
     file.bfReserved1 = 0;
     file.bfReserved2 = 0;
 
@@ -18,9 +17,9 @@ BMPHeader::BMPHeader()
 
     info.biWidth = 0;
     info.biHeight = 0;
-    info.biPlanes = 1;
-    info.biBitCount = 24;
-    info.biCompression = 0;
+    info.biPlanes = BMP_PLANES_DEFAULT;
+    info.biBitCount = BMP_BITCOUNT_DEFAULT;
+    info.biCompression = BMP_COMPRESSION_NONE;
     info.biSizeImage = 0;
     info.biXPelsPerMeter = 0;
     info.biYPelsPerMeter = 0;
@@ -35,8 +34,7 @@ BMPHeader::BMPHeader(int width, int height) : BMPHeader()
 
     int padding = rowPadding();
 
-    info.biSizeImage = (width * 3 + padding) * height;
-
+    info.biSizeImage = (width * BMP_CHANNELS + padding) * height;
     file.bfSize = file.bfOffBits + info.biSizeImage;
 }
 
@@ -54,6 +52,6 @@ void BMPHeader::write(std::ofstream& out) const
 
 int BMPHeader::rowPadding() const
 {
-    int rowSize = info.biWidth * 3;
-    return (4 - (rowSize % 4)) % 4;
+    int rowSize = info.biWidth * BMP_CHANNELS;
+    return (BMP_ALIGNMENT - (rowSize % BMP_ALIGNMENT)) % BMP_ALIGNMENT;
 }

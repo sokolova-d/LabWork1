@@ -10,8 +10,15 @@
 #include <cstdint>
 #include <fstream>
 
+static constexpr int BMP_CHANNELS = 3;
+static constexpr int BMP_ALIGNMENT = 4;
+static constexpr uint16_t BMP_TYPE_VALUE = 0x4D42;
+static constexpr uint32_t BMP_INFO_HEADER_SIZE = 40;
+static constexpr uint16_t BMP_PLANES_DEFAULT = 1;
+static constexpr uint16_t BMP_BITCOUNT_DEFAULT = 24;
+static constexpr uint32_t BMP_COMPRESSION_NONE = 0;
+
 #pragma pack(push, 1)
-//first header of the file
 struct BMPFileHeader
 {
     uint16_t bfType;
@@ -20,7 +27,7 @@ struct BMPFileHeader
     uint16_t bfReserved2;
     uint32_t bfOffBits;
 };
-//main header
+
 struct BMPInfoHeader
 {
     uint32_t biSize;
@@ -35,13 +42,11 @@ struct BMPInfoHeader
     uint32_t biClrUsed;
     uint32_t biClrImportant;
 };
-
 #pragma pack(pop)
 
 class BMPHeader
 {
 public:
-//constuctor
     BMPHeader();
     BMPHeader(int width, int height);
 
@@ -75,7 +80,7 @@ public:
     void updateSizes()
     {
         int padding = rowPadding();
-        info.biSizeImage = (info.biWidth * 3 + padding) * info.biHeight;
+        info.biSizeImage = (info.biWidth * BMP_CHANNELS + padding) * info.biHeight;
         file.bfSize = file.bfOffBits + info.biSizeImage;
     }
 
